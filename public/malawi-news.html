@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malawi News Aggregator</title>
+  
+  <!-- Google Fonts: Inter for clean, modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ===== CSS RESET & BASE STYLES ===== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Malawi Flag Colors */
+      --malawi-red: #CE1126;
+      --malawi-black: #1a1a1a;
+      --malawi-green: #339E35;
+      
+      /* UI Colors */
+      --bg-primary: #f8f9fa;
+      --bg-card: #ffffff;
+      --text-primary: #1a1a1a;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --border-color: #e5e7eb;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      
+      /* Spacing */
+      --container-max: 1200px;
+      --card-max: 400px;
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 0.75rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      --spacing-2xl: 3rem;
+      
+      /* Border Radius */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      
+      /* Transitions */
+      --transition-fast: 150ms ease;
+      --transition-normal: 200ms ease;
+      --transition-slow: 300ms ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== HEADER STYLES ===== */
+    header {
+      background: linear-gradient(135deg, var(--malawi-black) 0%, #2d2d2d 100%);
+      color: white;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Decorative flag stripe accent at top */
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, 
+        var(--malawi-red) 0%, 
+        var(--malawi-red) 33.33%, 
+        var(--malawi-black) 33.33%, 
+        var(--malawi-black) 66.66%, 
+        var(--malawi-green) 66.66%, 
+        var(--malawi-green) 100%
+      );
+    }
+
+    .header-content {
+      max-width: var(--container-max);
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 700;
+      margin-bottom: var(--spacing-sm);
+      letter-spacing: -0.02em;
+    }
+
+    /* Flag color accent on title */
+    h1 .accent-red { color: var(--malawi-red); }
+    h1 .accent-green { color: var(--malawi-green); }
+
+    .subtitle {
+      font-size: clamp(0.875rem, 2vw, 1rem);
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 400;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      flex: 1;
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-lg);
+      width: 100%;
+    }
+
+    /* Loading & Error States */
+    .status-message {
+      text-align: center;
+      padding: var(--spacing-2xl);
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .status-message.loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-color);
+      border-top-color: var(--malawi-green);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .status-message.error {
+      color: var(--malawi-red);
+      background: rgba(206, 17, 38, 0.05);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(206, 17, 38, 0.2);
+    }
+
+    /* ===== NEWS GRID ===== */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    /* ===== NEWS CARD ===== */
+    .news-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-color);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      transition: 
+        transform var(--transition-normal),
+        box-shadow var(--transition-normal),
+        border-color var(--transition-normal);
+      box-shadow: var(--shadow-sm);
+      max-width: var(--card-max);
+      width: 100%;
+    }
+
+    .news-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--malawi-green);
+    }
+
+    /* Source badge with color coding */
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--spacing-xs);
+    }
+
+    .source-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Different colors for different sources */
+    .source-badge[data-source="nyasa times"] {
+      background: rgba(206, 17, 38, 0.1);
+      color: var(--malawi-red);
+    }
+    .source-badge[data-source="malawi 24"] {
+      background: rgba(51, 158, 53, 0.1);
+      color: var(--malawi-green);
+    }
+    .source-badge[data-source="nation online"] {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+    }
+    .source-badge[data-source="times group"] {
+      background: rgba(139, 92, 246, 0.1);
+      color: #8b5cf6;
+    }
+    .source-badge[data-source="mbc"] {
+      background: rgba(245, 158, 11, 0.1);
+      color: #d97706;
+    }
+    .source-badge:not([data-source]) {
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+    }
+
+    .publish-date {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin: var(--spacing-xs) 0;
+    }
+
+    .card-title a {
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    .card-title a:hover {
+      color: var(--malawi-green);
+    }
+
+    .card-summary {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--malawi-green);
+      text-decoration: none;
+      margin-top: var(--spacing-sm);
+      transition: gap var(--transition-fast), color var(--transition-fast);
+    }
+
+    .read-more:hover {
+      gap: 0.625rem;
+      color: #2a7f2c;
+    }
+
+    .read-more-arrow {
+      transition: transform var(--transition-fast);
+    }
+
+    .read-more:hover .read-more-arrow {
+      transform: translateX(2px);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--malawi-black);
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      padding: var(--spacing-lg);
+      font-size: 0.8125rem;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: var(--malawi-green);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== RESPONSIVE ADJUSTMENTS ===== */
+    @media (max-width: 768px) {
+      header {
+        padding: var(--spacing-xl) var(--spacing-md);
+      }
+      
+      main {
+        padding: var(--spacing-lg) var(--spacing-md);
+      }
+      
+      .news-grid {
+        gap: var(--spacing-md);
+      }
+      
+      .news-card {
+        padding: var(--spacing-md);
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .subtitle {
+        font-size: 0.8125rem;
+      }
+      
+      .card-title {
+        font-size: 0.9375rem;
+      }
+      
+      .card-summary {
+        font-size: 0.8125rem;
+      }
+    }
+
+    /* ===== ARTICLE COUNT ===== */
+    .article-count {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .article-count strong {
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== HEADER ===== -->
+  <header>
+    <div class="header-content">
+      <h1>
+        <span class="accent-red">Malawi</span> News <span class="accent-green">Aggregator</span>
+      </h1>
+      <p class="subtitle">
+        Latest headlines from Nyasa Times, Malawi 24, Nation Online, and more — updated daily
+      </p>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main>
+    <div id="article-count" class="article-count" style="display: none;"></div>
+    <div id="news-container" class="news-grid">
+      <!-- Loading state shown by default -->
+      <div class="status-message loading" id="loading-message">
+        <div class="spinner"></div>
+        <span>Loading Malawi news...</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>Personal project — Data from public RSS feeds • 2026</p>
+    <p style="margin-top: 0.5rem; font-size: 0.75rem; opacity: 0.7;">
+      💡 Tip: For local development, run <code>python -m http.server</code> to avoid CORS issues
+    </p>
+  </footer>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    /**
+     * Malawi News Aggregator
+     * Fetches and displays news articles from a local JSON file
+     */
+
+    // Configuration
+    const CONFIG = {
+      jsonFile: 'malawi_news.json',
+      summaryMaxLength: 180,
+      dateLocale: 'en-US'
+    };
+
+    // DOM Elements
+    const newsContainer = document.getElementById('news-container');
+    const loadingMessage = document.getElementById('loading-message');
+    const articleCountEl = document.getElementById('article-count');
+
+    /**
+     * Strip HTML tags from a string
+     * @param {string} html - String potentially containing HTML tags
+     * @returns {string} Plain text without HTML tags
+     */
+    function stripHtmlTags(html) {
+      if (!html) return '';
+      // Create a temporary element to parse HTML and extract text
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      return tempDiv.textContent || tempDiv.innerText || '';
+    }
+
+    /**
+     * Truncate text to a maximum length, adding ellipsis if needed
+     * @param {string} text - Text to truncate
+     * @param {number} maxLength - Maximum character length
+     * @returns {string} Truncated text
+     */
+    function truncateText(text, maxLength) {
+      if (!text || text.length <= maxLength) return text;
+      // Find the last space before maxLength to avoid cutting words
+      const truncated = text.substring(0, maxLength);
+      const lastSpace = truncated.lastIndexOf(' ');
+      return (lastSpace > maxLength * 0.7 ? truncated.substring(0, lastSpace) : truncated) + '...';
+    }
+
+    /**
+     * Parse and format a date string
+     * @param {string} dateStr - Date string (e.g., "Wed, 04 Feb 2026 07:11:33 +0000")
+     * @returns {string} Formatted date (e.g., "Feb 4, 2026")
+     */
+    function formatDate(dateStr) {
+      try {
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) {
+          console.warn('Invalid date string:', dateStr);
+          return 'Date unavailable';
+        }
+        return date.toLocaleDateString(CONFIG.dateLocale, {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        });
+      } catch (error) {
+        console.error('Error parsing date:', error);
+        return 'Date unavailable';
+      }
+    }
+
+    /**
+     * Sort articles by published date (newest first)
+     * @param {Array} articles - Array of article objects
+     * @returns {Array} Sorted array
+     */
+    function sortByDateDescending(articles) {
+      return articles.sort((a, b) => {
+        const dateA = new Date(a.published);
+        const dateB = new Date(b.published);
+        return dateB - dateA;
+      });
+    }
+
+    /**
+     * Create HTML for a single news card
+     * @param {Object} article - Article data object
+     * @returns {string} HTML string for the card
+     */
+    function createNewsCard(article) {
+      const {
+        title = 'Untitled Article',
+        link = '#',
+        published = '',
+        summary = '',
+        source = 'Unknown Source'
+      } = article;
+
+      // Process the summary: strip HTML and truncate
+      const cleanSummary = truncateText(stripHtmlTags(summary), CONFIG.summaryMaxLength);
+      const formattedDate = formatDate(published);
+      const sourceLower = source.toLowerCase();
+
+      return `
+        <article class="news-card">
+          <div class="card-meta">
+            <span class="source-badge" data-source="${sourceLower}">${source}</span>
+            <time class="publish-date" datetime="${published}">${formattedDate}</time>
+          </div>
+          <h2 class="card-title">
+            <a href="${link}" target="_blank" rel="noopener noreferrer">${title}</a>
+          </h2>
+          <p class="card-summary">${cleanSummary || 'No summary available.'}</p>
+          <a href="${link}" target="_blank" rel="noopener noreferrer" class="read-more">
+            Read full article 
+            <span class="read-more-arrow">→</span>
+          </a>
+        </article>
+      `;
+    }
+
+    /**
+     * Show error message in the news container
+     * @param {string} message - Error message to display
+     */
+    function showError(message) {
+      newsContainer.innerHTML = `
+        <div class="status-message error">
+          <p><strong>⚠️ Error loading news</strong></p>
+          <p>${message}</p>
+          <p style="margin-top: 1rem; font-size: 0.875rem;">
+            Make sure <code>malawi_news.json</code> exists in the same folder.<br>
+            If opening from file://, try using a local server.
+          </p>
+        </div>
+      `;
+    }
+
+    /**
+     * Update article count display
+     * @param {number} count - Number of articles
+     */
+    function updateArticleCount(count) {
+      articleCountEl.innerHTML = `Showing <strong>${count}</strong> article${count !== 1 ? 's' : ''}`;
+      articleCountEl.style.display = 'block';
+    }
+
+    /**
+     * Render news articles to the page
+     * @param {Array} articles - Array of article objects
+     */
+    function renderNews(articles) {
+      if (!articles || articles.length === 0) {
+        newsContainer.innerHTML = `
+          <div class="status-message">
+            <p>No news articles found.</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Sort articles by date (newest first)
+      const sortedArticles = sortByDateDescending(articles);
+      
+      // Generate HTML for all cards
+      const cardsHtml = sortedArticles.map(createNewsCard).join('');
+      
+      // Update the container
+      newsContainer.innerHTML = cardsHtml;
+      
+      // Update article count
+      updateArticleCount(sortedArticles.length);
+      
+      console.log(`✅ Successfully loaded ${sortedArticles.length} articles`);
+    }
+
+    /**
+     * Fetch news data from JSON file
+     */
+    async function fetchNews() {
+      console.log(`📰 Fetching news from ${CONFIG.jsonFile}...`);
+      
+      try {
+        const response = await fetch(CONFIG.jsonFile);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const articles = await response.json();
+        
+        if (!Array.isArray(articles)) {
+          throw new Error('Invalid JSON format: expected an array of articles');
+        }
+        
+        renderNews(articles);
+        
+      } catch (error) {
+        console.error('❌ Error fetching news:', error);
+        
+        // Provide helpful error message based on error type
+        let userMessage = error.message;
+        
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          userMessage = 'Network error or CORS issue. If opening from file://, please use a local server.';
+        } else if (error instanceof SyntaxError) {
+          userMessage = 'Invalid JSON format in malawi_news.json. Please check the file syntax.';
+        }
+        
+        showError(userMessage);
+      }
+    }
+
+    // ===== INITIALIZE =====
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 Malawi News Aggregator initialized');
+      fetchNews();
+    });
+  </script>
+</body>
+</html>
