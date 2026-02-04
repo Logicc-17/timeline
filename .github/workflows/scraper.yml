@@ -2,8 +2,8 @@ name: Scraper Cron
 
 on:
   schedule:
-    - cron: '0 * * * *'  # runs at the top of every hour
-  workflow_dispatch:      # allows manual run
+    - cron: '0 * * * *'  # every hour
+  workflow_dispatch:      # manual run
 
 jobs:
   run-scraper:
@@ -13,22 +13,24 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          node-version: '20'
+          python-version: '3.11'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # adjust if needed
 
       - name: Run scraper
-        run: node scripts/scraper.js  # adjust path to your scraper
+        run: python scraper/script.py
 
       - name: Commit updated data
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add path/to/data.json    # whatever your scraper updates
+          git add scraper/malawi_news.json
           git commit -m "Update scraped data" || echo "No changes to commit"
           git push
         env:
