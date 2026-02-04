@@ -35,5 +35,5 @@ Example card on the website:
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/malawi-news-aggregator.git
+   git clone https://github.com/Logicc-17/timeline.git
    cd malawi-news-aggregator
