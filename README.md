@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Malawi News Aggregator
 
-## Getting Started
+A simple yet powerful Python-based news aggregator focused on **Malawian sources**. It collects the latest headlines, summaries, and (optionally) full article content from major Malawi news outlets like Nyasa Times, Malawi 24, Nation Online, and more.
 
-First, run the development server:
+Two modes are supported:
+- **Lightweight RSS mode** → fast, polite, reliable headlines via public feeds.
+- **Full scraping mode** → richer data (cleaned text, images, better dates) using Newspaper4k.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Built for personal/educational use in Blantyre, Malawi — great for staying updated on local politics, economy, markets (like Wakawaka), and national news.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Includes a **single-page HTML dashboard** that loads the generated JSON and displays articles as beautiful, responsive cards.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Collects from 8+ popular Malawi news sites
+- RSS parsing (fast & stable) or Newspaper4k scraping (detailed extraction)
+- Sorts articles by publish date (newest first)
+- Outputs clean JSON for easy reuse
+- Simple, modern single-file HTML frontend (no backend/server needed)
+- Polite scraping: delays, user-agent, error handling
+- Requirements frozen in `requirements.txt`
 
-## Learn More
+## Demo Screenshots
 
-To learn more about Next.js, take a look at the following resources:
+(Add screenshots here later – e.g. terminal output, JSON file, and the HTML page in browser)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Example card on the website:
+- **Title**: ANALYSIS | Ben Phiri’s hands-on leadership finally breaks the Wakawaka deadlock
+- **Source**: Nyasa Times • Feb 4, 2026
+- **Summary**: For more than four years, the Wakawaka market saga has stood as a symbol of policy paralysis...
+- **Read more** → link to original
+- (Optional image from article if available)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Installation
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/malawi-news-aggregator.git
+   cd malawi-news-aggregator
