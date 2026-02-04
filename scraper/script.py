@@ -1,8 +1,7 @@
 import time
-from datetime import datetime
 import json
 from newspaper import Article, Config, build  # newspaper4k uses same imports
-
+from datetime import datetime, timezone
 # List of sites (same as before, but now we use homepage URLs)
 sites = [
     {"name": "Nyasa Times", "url": "https://www.nyasatimes.com/"},
@@ -15,7 +14,7 @@ sites = [
     {"name": "Malawi News Agency (MANA)", "url": "https://www.manaonline.gov.mw/"},
 ]
 
-# Configuration (helps with parsing reliability)
+# Configuration (to help with parsing reliability)
 config = Config()
 config.memoize_articles = False  # Don't cache (we want fresh)
 config.request_timeout = 10  # Seconds before timeout
@@ -74,13 +73,16 @@ for site in sites:
 
 
 # Sort by published date (newest first) – handle "N/A" gracefully
+
+
 def parse_date(dt_str):
     if dt_str == "N/A":
-        return datetime.min
+        return datetime.min.replace(tzinfo=timezone.utc)  # ensure tz-aware
     try:
-        return datetime.strptime(dt_str, "%a, %d %b %Y %H:%M:%S %z")
+        dt = datetime.strptime(dt_str, "%a, %d %b %Y %H:%M:%S %z")
+        return dt
     except:
-        return datetime.min
+        return datetime.min.replace(tzinfo=timezone.utc)
 
 
 all_news.sort(key=lambda x: parse_date(x["published"]), reverse=True)
