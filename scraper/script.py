@@ -1,7 +1,9 @@
 import time
 import json
 from newspaper import Article, Config, build  # newspaper4k uses same imports
-from datetime import datetime, timezone
+from datetime import datetime, timezonefrom pathlib 
+import Path
+
 # List of sites (same as before, but now we use homepage URLs)
 sites = [
     {"name": "Nyasa Times", "url": "https://www.nyasatimes.com/"},
@@ -87,8 +89,13 @@ def parse_date(dt_str):
 
 all_news.sort(key=lambda x: parse_date(x["published"]), reverse=True)
 
-# Save to JSON
-with open("../public/malawi_news.json", "w", encoding="utf-8") as f:
-    json.dump(all_news, f, ensure_ascii=False, indent=2)
+BASE_DIR = Path(__file__).resolve().parent      # scraper/
+PUBLIC_DIR = BASE_DIR.parent / "public"         # repo/public
+PUBLIC_DIR.mkdir(parents=True, exist_ok=True)
 
+output_file = PUBLIC_DIR / "malawi_news.json"
+
+with open(output_file, "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+    
 print(f"Collected {len(all_news)} articles! Saved to malawi_news.json")
