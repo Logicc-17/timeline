@@ -1,0 +1,35 @@
+name: Scraper Cron
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # runs at the top of every hour
+  workflow_dispatch:      # allows manual run
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run scraper
+        run: node scripts/scraper.js  # adjust path to your scraper
+
+      - name: Commit updated data
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add path/to/data.json    # whatever your scraper updates
+          git commit -m "Update scraped data" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
