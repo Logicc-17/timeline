@@ -1,0 +1,8 @@
+# requirements.txt
+newspaper4k>=0.9.4          # Main library for article extraction & site building
+requests>=2.31.0            # Usually pulled in by newspaper4k, but explicit is safer
+lxml>=5.3.0                 # Core HTML parser (newspaper4k depends on it)
+cssselect>=1.2.0            # Used for CSS-based extraction
+beautifulsoup4>=4.12.0      # Fallback parser in some cases
+python-dateutil>=2.8.2      # For better date parsing
+pytz>=2024.1                # Timezone handling (often needed with dates)
