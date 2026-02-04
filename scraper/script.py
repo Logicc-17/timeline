@@ -1,8 +1,8 @@
 import time
 import json
 from newspaper import Article, Config, build  # newspaper4k uses same imports
-from datetime import datetime, timezonefrom pathlib 
-import Path
+from datetime import datetime, timezone
+from pathlib import Path
 
 # List of sites (same as before, but now we use homepage URLs)
 sites = [
