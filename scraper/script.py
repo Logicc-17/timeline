@@ -88,7 +88,7 @@ def parse_date(dt_str):
 all_news.sort(key=lambda x: parse_date(x["published"]), reverse=True)
 
 # Save to JSON
-with open("malawi_news.json", "w", encoding="utf-8") as f:
+with open("../public/malawi_news.json", "w", encoding="utf-8") as f:
     json.dump(all_news, f, ensure_ascii=False, indent=2)
 
 print(f"Collected {len(all_news)} articles! Saved to malawi_news.json")
