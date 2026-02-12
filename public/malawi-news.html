@@ -1,306 +1,305 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Malawi News Aggregator</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Malawi News Aggregator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #339E35;
+            --accent: #CE1126;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-font-family:'Inter',sans-serif;
-background:
-radial-gradient(circle at 20% 20%, rgba(51,158,53,0.08), transparent 40%),
-radial-gradient(circle at 80% 0%, rgba(206,17,38,0.08), transparent 40%),
-#f6f8fa;
-color:#111;
-min-height:100vh;
-display:flex;
-flex-direction:column;
-}
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(51, 158, 53, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(206, 17, 38, 0.05) 0px, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
 
-header{
-background:linear-gradient(135deg,#111,#1e1e1e);
-color:white;
-padding:3rem 1rem;
-text-align:center;
-position:relative;
-overflow:hidden;
-}
-header::after{
-content:'';
-position:absolute;
-width:600px;
-height:600px;
-background:radial-gradient(circle, rgba(51,158,53,0.15), transparent 70%);
-top:-200px;
-right:-200px;
-}
-.header-content{position:relative;z-index:1}
-h1{font-size:2.4rem;font-weight:700}
-h1 span:first-child{color:#CE1126}
-h1 span:last-child{color:#339E35}
-.subtitle{margin-top:.5rem;opacity:.8}
+        /* HEADER */
+        header {
+            padding: 4rem 1rem 2rem;
+            text-align: center;
+        }
 
-main{
-max-width:1200px;
-margin:2rem auto;
-padding:0 1rem;
-flex:1;
-}
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
 
-/* HERO */
-.hero{
-background:white;
-border-radius:20px;
-padding:2rem;
-margin-bottom:2rem;
-box-shadow:0 15px 40px rgba(0,0,0,.08);
-display:none;
-}
-.hero h2{
-font-size:1.5rem;
-margin-bottom:1rem;
-}
-.hero .meta{
-font-size:.8rem;
-color:#6b7280;
-margin-bottom:1rem;
-}
-.hero a{
-color:#339E35;
-font-weight:600;
-text-decoration:none;
-}
-.hero a:hover{opacity:.8}
+        h1 span.red { color: var(--accent); }
+        h1 span.green { color: var(--primary); }
 
-/* FILTER */
-.filter-bar{
-display:flex;
-flex-wrap:wrap;
-gap:.5rem;
-margin-bottom:2rem;
-justify-content:center;
-}
-.filter-btn{
-padding:.45rem 1rem;
-border-radius:999px;
-border:1px solid #e5e7eb;
-background:white;
-cursor:pointer;
-font-size:.8rem;
-transition:.2s;
-}
-.filter-btn:hover{
-background:#339E35;
-color:white;
-border-color:#339E35;
-}
-.filter-btn.active{
-background:#339E35;
-color:white;
-}
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
 
-/* GRID */
-.news-grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-gap:1.5rem;
-}
+        main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
 
-/* CARD */
-.news-card{
-background:rgba(255,255,255,.75);
-backdrop-filter:blur(12px);
-border-radius:16px;
-padding:1.5rem;
-box-shadow:0 8px 24px rgba(0,0,0,.06);
-display:flex;
-flex-direction:column;
-gap:.7rem;
-transition:.25s;
-}
-.news-card:hover{
-transform:translateY(-6px);
-box-shadow:0 18px 40px rgba(0,0,0,.12);
-}
-.card-meta{
-font-size:.75rem;
-color:#6b7280;
-display:flex;
-justify-content:space-between;
-}
-.card-title{
-font-weight:700;
-font-size:1rem;
-}
-.card-title a{
-color:#111;
-text-decoration:none;
-}
-.card-title a:hover{
-color:#339E35;
-}
-.summary{
-font-size:.85rem;
-color:#6b7280;
-flex:1;
-}
-.read-more{
-font-size:.8rem;
-font-weight:600;
-color:#339E35;
-text-decoration:none;
-}
-.read-more:hover{opacity:.8}
+        /* FILTER BAR */
+        .filter-wrapper {
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: center;
+        }
 
-footer{
-background:#111;
-color:rgba(255,255,255,.6);
-text-align:center;
-padding:1.5rem;
-font-size:.8rem;
-}
-</style>
+        .filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.6rem;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 100px;
+            overflow-x: auto;
+            max-width: 100%;
+            scrollbar-width: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .filter-bar::-webkit-scrollbar { display: none; }
+
+        .filter-btn {
+            white-space: nowrap;
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .filter-btn:hover { color: var(--text-main); }
+
+        .filter-btn.active {
+            background: var(--text-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* NEWS GRID */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        /* CARDS */
+        .news-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .news-card:hover {
+            transform: translateY(-8px);
+            background: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            border-color: var(--primary);
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .source-tag {
+            background: rgba(51, 158, 53, 0.1);
+            color: var(--primary);
+            padding: 0.2rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .card-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+        }
+
+        .card-title a {
+            color: var(--text-main);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .card-title a:hover { color: var(--primary); }
+
+        .summary {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex-grow: 1;
+        }
+
+        .read-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            gap: 5px;
+        }
+
+        .read-link:hover gap: 10px;
+
+        footer {
+            margin-top: 5rem;
+            padding: 3rem;
+            text-align: center;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .news-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-
 <body>
 
 <header>
-<div class="header-content">
-<h1><span>Malawi</span> News <span>Aggregator</span></h1>
-<p class="subtitle">Latest headlines from major Malawi news sources</p>
-</div>
+    <h1><span class="red">Malawi</span> News <span class="green">Aggregator</span></h1>
+    <p class="subtitle">Curated headlines from the heart of Africa</p>
 </header>
 
 <main>
+    <div class="filter-wrapper">
+        <div id="filter-bar" class="filter-bar"></div>
+    </div>
 
-<div id="hero" class="hero"></div>
-
-<div id="filter-bar" class="filter-bar"></div>
-
-<div id="news-container" class="news-grid"></div>
-
+    <div id="news-container" class="news-grid">
+        </div>
 </main>
 
 <footer>
-Malawi News Aggregator • RSS Powered • 2026
+    &copy; 2026 Malawi News Aggregator • Freshly updated headlines
 </footer>
 
 <script>
-const CONFIG={
-jsonFile:'malawi_news.json',
-maxSummary:160
+const CONFIG = {
+    jsonFile: 'malawi_news.json',
+    maxSummary: 160
 };
 
 const SITES = [
-"Nyasa Times",
-"Malawi 24",
-"Face of Malawi",
-"Malawi Voice",
-"Maravi Express",
-"Times 360 Malawi / Times Group",
-"Nation Online (The Nation)",
-"Malawi News Agency (MANA)",
-"Maravi Post",
-"Zodiak Malawi",
-"Capital FM Malawi",
-"Focus Malawi",
-"Biz Malawi",
-"Business Malawi",
-"The Daily Times / Times Group",
-"The Nation Malawi"
+    "Nyasa Times", "Malawi 24", "Face of Malawi", "Malawi Voice", 
+    "Maravi Express", "Times 360 Malawi", "Nation Online", 
+    "MANA", "Zodiak Malawi", "Capital FM"
 ];
 
-let allArticles=[];
+let allArticles = [];
 
-/* CREATE FILTER BUTTONS */
-function createFilters(){
-const bar=document.getElementById('filter-bar');
-bar.innerHTML='<button class="filter-btn active" data-filter="all">All</button>';
-SITES.forEach(site=>{
-bar.innerHTML+=`<button class="filter-btn" data-filter="${site}">${site}</button>`;
-});
-document.querySelectorAll('.filter-btn').forEach(btn=>{
-btn.addEventListener('click',()=>{
-document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-const filter=btn.dataset.filter;
-if(filter==='all') render(allArticles);
-else render(allArticles.filter(a=>a.source===filter));
-});
-});
-}
+function createFilters() {
+    const bar = document.getElementById('filter-bar');
+    let html = '<button class="filter-btn active" data-filter="all">All Stories</button>';
+    SITES.forEach(site => {
+        html += `<button class="filter-btn" data-filter="${site}">${site}</button>`;
+    });
+    bar.innerHTML = html;
 
-/* HERO */
-function renderHero(article){
-const hero=document.getElementById('hero');
-hero.style.display='block';
-hero.innerHTML=`
-<h2>${article.title}</h2>
-<div class="meta">${article.source} • ${formatDate(article.published)}</div>
-<p>${truncate(article.summary,250)}</p>
-<br>
-<a href="${article.link}" target="_blank">Read full article →</a>
-`;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const filter = btn.dataset.filter;
+            render(filter === 'all' ? allArticles : allArticles.filter(a => a.source.includes(filter) || filter.includes(a.source)));
+        });
+    });
 }
 
-/* HELPERS */
-function truncate(text,len){
-if(!text) return '';
-return text.length>len?text.substring(0,len)+'...':text;
-}
-function formatDate(dateStr){
-const date=new Date(dateStr);
-return isNaN(date)?'—':date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return isNaN(date) ? 'Just now' : date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
 }
 
-/* CARD */
-function createCard(article){
-return `
-<article class="news-card">
-<div class="card-meta">
-<span>${article.source}</span>
-<span>${formatDate(article.published)}</span>
-</div>
-<h3 class="card-title">
-<a href="${article.link}" target="_blank">${article.title}</a>
-</h3>
-<p class="summary">${truncate(article.summary,CONFIG.maxSummary)}</p>
-<a href="${article.link}" target="_blank" class="read-more">Read →</a>
-</article>
-`;
+function createCard(article) {
+    return `
+        <article class="news-card">
+            <div class="card-meta">
+                <span class="source-tag">${article.source}</span>
+                <span class="card-date">${formatDate(article.published)}</span>
+            </div>
+            <h3 class="card-title">
+                <a href="${article.link}" target="_blank">${article.title}</a>
+            </h3>
+            <p class="summary">${article.summary || 'No summary available for this story.'}</p>
+            <a href="${article.link}" target="_blank" class="read-link">Read full story →</a>
+        </article>
+    `;
 }
 
-/* RENDER */
-function render(articles){
-const container=document.getElementById('news-container');
-if(!articles.length){
-container.innerHTML='<p>No articles found.</p>';
-return;
-}
-const sorted=articles.sort((a,b)=>new Date(b.published)-new Date(a.published));
-renderHero(sorted[0]);
-container.innerHTML=sorted.slice(1).map(createCard).join('');
+function render(articles) {
+    const container = document.getElementById('news-container');
+    if (!articles.length) {
+        container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 3rem;">No articles found for this source.</p>';
+        return;
+    }
+    const sorted = articles.sort((a, b) => new Date(b.published) - new Date(a.published));
+    container.innerHTML = sorted.map(createCard).join('');
 }
 
-/* FETCH */
-async function fetchNews(){
-try{
-const res=await fetch(CONFIG.jsonFile);
-const data=await res.json();
-allArticles=data;
-render(data);
-}catch{
-document.getElementById('news-container').innerHTML='<p>Error loading news.</p>';
-}
+async function fetchNews() {
+    try {
+        const res = await fetch(CONFIG.jsonFile);
+        allArticles = await res.json();
+        render(allArticles);
+    } catch {
+        document.getElementById('news-container').innerHTML = '<p>Unable to load news. Please check your data source.</p>';
+    }
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
-createFilters();
-fetchNews();
+document.addEventListener('DOMContentLoaded', () => {
+    createFilters();
+    fetchNews();
 });
 </script>
 
